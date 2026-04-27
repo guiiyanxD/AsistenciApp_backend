@@ -1,0 +1,23 @@
+__pycache__/**/*
+*.py[cod]
+*$py.class
+.env
+.venv
+venv/
+env/
+build/
+dist/
+*cpython
+
+# ---- DOCKER----
+.docker/
+pgdata/
+postgres-data/
+Thumbs.db
+.DS_Store
+
+*.log
+*.sql.gz
+*.sql.tar
+node_modules/
+.git

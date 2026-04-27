@@ -30,13 +30,13 @@ def _registrar_docente(handler):
             body.get("nombre", ""),
             body.get("email", ""),
             body.get("password", ""),
-            body.get("profesion", "")
+            body.get("profesion", ""),
         )
         send_json(handler, 201, resultado)
     except ValueError as e:
         send_error(handler, 400, str(e))
     except Exception:
-        send_error(handler, 500, "Error interno del servidor")
+        send_error(handler, 500, f"Error interno del servidor ${str(e)}")
 
 
 def _login_docente(handler):

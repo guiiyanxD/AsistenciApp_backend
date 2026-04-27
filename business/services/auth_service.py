@@ -12,12 +12,13 @@ class AuthService:
 
     def registrar_docente(self, nombre: str, email: str, password: str, profesion: str) -> dict:
         if not nombre or not email or not password or not profesion:
-            raise ValueError("Nombre, email y contraseña son obligatorios")
+            raise ValueError("Nombre, email, contraseña y profesión son obligatorios")
         if len(password) < 8:
             raise ValueError("La contraseña debe tener al menos 8 caracteres")
         if self.docente_repo.email_existe(email):
             raise ValueError("El email ya está registrado")
-
+        if not profesion:
+            profesion = "Ingeniero en sistemas"
         password_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
         docente = self.docente_repo.crear(nombre, email, password_hash, profesion)
         token = generar_token({"sub": str(docente["id"]), "rol": "docente"})

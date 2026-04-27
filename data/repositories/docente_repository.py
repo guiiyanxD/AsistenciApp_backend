@@ -9,7 +9,7 @@ class DocenteRepository:
                 cur.execute(
                     """
                     INSERT INTO docente (nombre, email, password_hash, profesion)
-                    VALUES (%s, %s, %s)
+                    VALUES (%s, %s, %s, %s)
                     RETURNING id, nombre, email,  profesion, creado_en
                     """,
                     (nombre, email, password_hash, profesion),
