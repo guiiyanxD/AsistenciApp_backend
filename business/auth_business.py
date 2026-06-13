@@ -4,7 +4,7 @@ from data.repositories.estudiante_repository import EstudianteRepository
 from utils.jwt_helper import generar_token
 
 
-class AuthService:
+class AuthBusiness:
 
     def __init__(self):
         self.docente_repo = DocenteRepository()
@@ -21,7 +21,7 @@ class AuthService:
             profesion = "Ingeniero en sistemas"
         password_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
         docente = self.docente_repo.crear(nombre, email, password_hash, profesion)
-        token = generar_token({"sub": str(docente["id"]), "rol": "docente"})
+        token = generar_token({"sub": str(docente["id"]), "rol": "docente", "nombre": nombre})
         return {"docente": docente, "token": token}
 
     def login_docente(self, email: str, password: str) -> dict:
@@ -32,8 +32,7 @@ class AuthService:
             raise PermissionError("Credenciales incorrectas")
         if not bcrypt.checkpw(password.encode(), docente["password_hash"].encode()):
             raise PermissionError("Credenciales incorrectas")
-
-        token = generar_token({"sub": str(docente["id"]), "rol": "docente"})
+        token = generar_token({"sub": str(docente["id"]), "rol": "docente", "nombre": docente["nombre"]})
         docente.pop("password_hash", None)
         return {"docente": docente, "token": token}
 
@@ -44,10 +43,9 @@ class AuthService:
             raise ValueError("La contraseña debe tener al menos 8 caracteres")
         if self.estudiante_repo.email_existe(email):
             raise ValueError("El email ya está registrado")
-
         password_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
         estudiante = self.estudiante_repo.crear(nombre, email, password_hash)
-        token = generar_token({"sub": str(estudiante["id"]), "rol": "estudiante"})
+        token = generar_token({"sub": str(estudiante["id"]), "rol": "estudiante", "nombre": nombre})
         return {"estudiante": estudiante, "token": token}
 
     def login_estudiante(self, email: str, password: str) -> dict:
@@ -58,7 +56,6 @@ class AuthService:
             raise PermissionError("Credenciales incorrectas")
         if not bcrypt.checkpw(password.encode(), estudiante["password_hash"].encode()):
             raise PermissionError("Credenciales incorrectas")
-
-        token = generar_token({"sub": str(estudiante["id"]), "rol": "estudiante"})
+        token = generar_token({"sub": str(estudiante["id"]), "rol": "estudiante", "nombre": estudiante["nombre"]})
         estudiante.pop("password_hash", None)
         return {"estudiante": estudiante, "token": token}

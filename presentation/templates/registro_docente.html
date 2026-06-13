@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro Docente - Sistema de Asistencias</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+
+<div class="login-pagina">
+    <div class="login-tarjeta">
+
+        <h1 class="login-titulo">Registro de Docente</h1>
+        <p class="login-subtitulo">Crea tu cuenta para gestionar tus materias y grupos</p>
+
+        {% if error %}
+        <div class="alerta-error">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST" action="/registro/docente">
+
+            <div class="campo">
+                <label for="nombre">Nombre completo</label>
+                <input type="text" id="nombre" name="nombre"
+                    value="{{ datos.nombre or '' }}"
+                    placeholder="Ej. Juan Pérez" required>
+            </div>
+
+            <div class="campo">
+                <label for="profesion">Profesión</label>
+                <input type="text" id="profesion" name="profesion"
+                    value="{{ datos.profesion or '' }}"
+                    placeholder="Ej. Ingeniero en Sistemas" required>
+            </div>
+
+            <div class="campo">
+                <label for="email">Correo electrónico</label>
+                <input type="email" id="email" name="email"
+                    value="{{ datos.email or '' }}"
+                    placeholder="correo@ejemplo.com" required>
+            </div>
+
+            <div class="campo">
+                <label for="password">Contraseña</label>
+                <input type="password" id="password" name="password"
+                    placeholder="Mínimo 8 caracteres" required minlength="8">
+            </div>
+
+            <button type="submit" class="btn-login">Crear cuenta</button>
+
+        </form>
+
+        <div class="login-pie">
+            ¿Ya tienes cuenta? <a href="/login">Inicia sesión aquí</a>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

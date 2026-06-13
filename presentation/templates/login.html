@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - Sistema de Asistencias</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+
+<div class="login-pagina">
+    <div class="login-tarjeta">
+
+        <h1 class="login-titulo">Sistema de Asistencias</h1>
+        <p class="login-subtitulo">Selecciona tu rol e inicia sesión</p>
+
+        {% if error %}
+        <div class="alerta-error">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST" action="/login">
+
+            <div class="selector-roles">
+                <input type="radio" id="rol-docente" name="rol" value="docente"
+                    {% if rol == 'docente' %}checked{% endif %} required>
+                <label for="rol-docente">Docente</label>
+
+                <input type="radio" id="rol-estudiante" name="rol" value="estudiante"
+                    {% if rol == 'estudiante' %}checked{% endif %}>
+                <label for="rol-estudiante">Estudiante</label>
+            </div>
+
+            <div class="campo">
+                <label for="email">Correo electrónico</label>
+                <input type="email" id="email" name="email"
+                    value="{{ email or '' }}"
+                    placeholder="correo@ejemplo.com" required>
+            </div>
+
+            <div class="campo">
+                <label for="password">Contraseña</label>
+                <input type="password" id="password" name="password"
+                    placeholder="Tu contraseña" required>
+            </div>
+
+            <button type="submit" class="btn-login">Ingresar</button>
+
+        </form>
+
+        <div class="login-pie">
+            ¿No tienes cuenta?
+            <a href="/registro/docente">Regístrate como docente</a> ·
+            <a href="/registro/estudiante">Regístrate como estudiante</a>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block titulo %}Panel Estudiante - Sistema de Asistencias{% endblock %}
+
+{% block contenido %}
+
+<div class="bienvenida">
+    <h1>Bienvenido, {{ nombre }}</h1>
+    <p>Aquí están los grupos en los que estás inscrito.</p>
+</div>
+
+<div class="seccion">
+    <h2 class="seccion-titulo">Mis Grupos Inscritos</h2>
+
+    {% if grupos %}
+    <table class="tabla">
+        <thead>
+            <tr>
+                <th>Nombre del grupo</th>
+                <th>Materia</th>
+                <th>Período</th>
+                <th>Fechas</th>
+                <th>Código</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for g in grupos %}
+            <tr>
+                <td>{{ g.grupo_nombre }}</td>
+                <td>{{ g.materia_nombre }}</td>
+                <td>{{ g.periodo_nombre }}</td>
+                <td>{{ g.fecha_inicio }} — {{ g.fecha_fin }}</td>
+                <td><span class="badge badge-codigo">{{ g.codigo_invitacion }}</span></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="vacio">No estás inscrito en ningún grupo todavía.</p>
+    {% endif %}
+
+</div>
+
+{% endblock %}

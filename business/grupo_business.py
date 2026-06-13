@@ -12,7 +12,7 @@ DIAS_SEMANA = {
 DIAS_VALIDOS = set(DIAS_SEMANA.keys())
 
 
-class GrupoService:
+class GrupoBusiness:
 
     def __init__(self):
         self.repo = GrupoRepository()
@@ -102,17 +102,8 @@ class GrupoService:
 
         return {"horarios": horarios_creados, "clases_regeneradas": len(clases)}
 
-    # ------------------------------------------------------------------
-    # Lógica de generación de clases
-    # ------------------------------------------------------------------
-
     def _generar_clases(self, grupo_id: str, horarios: list[dict],
                         fecha_inicio, fecha_fin) -> list[dict]:
-        """
-        Recorre el rango del periodo día a día.
-        Por cada día que coincida con un día de la semana definido en los
-        horarios, genera una instancia de clase.
-        """
         if isinstance(fecha_inicio, str):
             fecha_inicio = datetime.date.fromisoformat(str(fecha_inicio))
         if isinstance(fecha_fin, str):

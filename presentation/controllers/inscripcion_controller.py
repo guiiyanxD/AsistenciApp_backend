@@ -1,8 +1,8 @@
-from business.services.inscripcion_service import InscripcionService
-from presentation.middlewares.auth_middleware import solo_estudiante, autenticar
+from business.inscripcion_business import InscripcionBusiness
+from presentation.middlewares.auth_middleware import solo_estudiante
 from utils.http_helpers import read_json_body, send_json, send_error
 
-inscripcion_service = InscripcionService()
+inscripcion_business = InscripcionBusiness()
 
 
 def handle_inscripciones(handler, method: str, parts: list[str]):
@@ -27,9 +27,7 @@ def _unirse(handler):
     try:
         body = read_json_body(handler)
         codigo = body.get("codigo", "")
-        resultado = inscripcion_service.unirse_por_codigo(
-            codigo, payload["sub"]
-        )
+        resultado = inscripcion_business.unirse_por_codigo(codigo, payload["sub"])
         send_json(handler, 201, resultado)
     except LookupError as e:
         send_error(handler, 404, str(e))
@@ -44,7 +42,7 @@ def _mis_grupos(handler):
     if not payload:
         return
     try:
-        grupos = inscripcion_service.listar_grupos_estudiante(payload["sub"])
+        grupos = inscripcion_business.listar_grupos_estudiante(payload["sub"])
         send_json(handler, 200, {"grupos": grupos})
     except Exception:
         send_error(handler, 500, "Error interno del servidor")

@@ -4,7 +4,7 @@ from data.repositories.inscripcion_repository import InscripcionRepository
 from data.repositories.grupo_repository import GrupoRepository
 
 
-class AsistenciaService:
+class AsistenciaBusiness:
 
     def __init__(self):
         self.repo = AsistenciaRepository()
@@ -15,25 +15,21 @@ class AsistenciaService:
                latitud: float | None, longitud: float | None,
                precision_metros: float | None) -> dict:
 
-        # 1. Verificar que el estudiante esté inscrito en el grupo
         inscripcion = self.inscripcion_repo.buscar_inscripcion_activa(
             grupo_id, estudiante_id
         )
         if not inscripcion:
             raise PermissionError("No estás inscrito en este grupo")
 
-        # 2. Verificar que haya una clase activa en este momento
         clase = self.repo.buscar_clase_activa(grupo_id)
         if not clase:
             raise ValueError(
                 "No hay ninguna clase activa en este momento para este grupo"
             )
 
-        # 3. Verificar que no haya marcado ya en esta clase
         if self.repo.existe_asistencia(clase["id"], inscripcion["id"]):
             raise ValueError("Ya marcaste tu asistencia en esta clase")
 
-        # 4. Registrar asistencia
         asistencia = self.repo.crear(
             clase["id"], inscripcion["id"],
             latitud, longitud, precision_metros
@@ -51,7 +47,6 @@ class AsistenciaService:
         }
 
     def listar_por_clase(self, clase_id: str, docente_id: str) -> list[dict]:
-        # Verificar que la clase pertenece a un grupo del docente
         clase = self.repo.buscar_clase_por_id(clase_id)
         if not clase:
             raise LookupError("Clase no encontrada")

@@ -1,7 +1,7 @@
-from business.services.auth_service import AuthService
+from business.auth_business import AuthBusiness
 from utils.http_helpers import read_json_body, send_json, send_error
 
-auth_service = AuthService()
+auth_business = AuthBusiness()
 
 
 def handle_auth(handler, method: str, parts: list[str]):
@@ -26,7 +26,7 @@ def handle_auth(handler, method: str, parts: list[str]):
 def _registrar_docente(handler):
     try:
         body = read_json_body(handler)
-        resultado = auth_service.registrar_docente(
+        resultado = auth_business.registrar_docente(
             body.get("nombre", ""),
             body.get("email", ""),
             body.get("password", ""),
@@ -36,13 +36,13 @@ def _registrar_docente(handler):
     except ValueError as e:
         send_error(handler, 400, str(e))
     except Exception:
-        send_error(handler, 500, f"Error interno del servidor ${str(e)}")
+        send_error(handler, 500, "Error interno del servidor")
 
 
 def _login_docente(handler):
     try:
         body = read_json_body(handler)
-        resultado = auth_service.login_docente(
+        resultado = auth_business.login_docente(
             body.get("email", ""),
             body.get("password", ""),
         )
@@ -58,7 +58,7 @@ def _login_docente(handler):
 def _registrar_estudiante(handler):
     try:
         body = read_json_body(handler)
-        resultado = auth_service.registrar_estudiante(
+        resultado = auth_business.registrar_estudiante(
             body.get("nombre", ""),
             body.get("email", ""),
             body.get("password", ""),
@@ -73,7 +73,7 @@ def _registrar_estudiante(handler):
 def _login_estudiante(handler):
     try:
         body = read_json_body(handler)
-        resultado = auth_service.login_estudiante(
+        resultado = auth_business.login_estudiante(
             body.get("email", ""),
             body.get("password", ""),
         )

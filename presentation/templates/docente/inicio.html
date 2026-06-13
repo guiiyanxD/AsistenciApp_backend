@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block titulo %}Panel Docente - Sistema de Asistencias{% endblock %}
+
+{% block contenido %}
+
+<div class="bienvenida">
+    <h1>Bienvenido, {{ nombre }}</h1>
+    <p>Aquí tienes un resumen de tu actividad académica.</p>
+</div>
+
+<div class="tarjetas-resumen">
+    <div class="tarjeta-stat">
+        <div class="numero">{{ materias | length }}</div>
+        <div class="etiqueta">Materias</div>
+    </div>
+    <div class="tarjeta-stat">
+        <div class="numero">{{ periodos | length }}</div>
+        <div class="etiqueta">Períodos académicos</div>
+    </div>
+    <div class="tarjeta-stat">
+        <div class="numero">{{ grupos | length }}</div>
+        <div class="etiqueta">Grupos</div>
+    </div>
+</div>
+
+<div class="seccion">
+    <h2 class="seccion-titulo">Mis Grupos</h2>
+
+    {% if grupos %}
+    <table class="tabla">
+        <thead>
+            <tr>
+                <th>Nombre del grupo</th>
+                <th>Materia</th>
+                <th>Período</th>
+                <th>Código de invitación</th>
+                <th>Cupo máximo</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for grupo in grupos %}
+            <tr>
+                <td>{{ grupo.nombre }}</td>
+                <td>{{ grupo.materia_nombre }}</td>
+                <td>{{ grupo.periodo_nombre }}</td>
+                <td><span class="badge badge-codigo">{{ grupo.codigo_invitacion }}</span></td>
+                <td>{{ grupo.cupo_maximo if grupo.cupo_maximo else 'Sin límite' }}</td>
+                <td>
+                    {% if grupo.activo %}
+                    <span class="badge badge-verde">Activo</span>
+                    {% else %}
+                    <span class="badge badge-rojo">Inactivo</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="vacio">No tienes grupos registrados aún.</p>
+    {% endif %}
+
+</div>
+
+{% endblock %}

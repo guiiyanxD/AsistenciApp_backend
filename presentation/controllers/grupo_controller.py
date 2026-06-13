@@ -1,8 +1,8 @@
-from business.services.grupo_service import GrupoService
+from business.grupo_business import GrupoBusiness
 from presentation.middlewares.auth_middleware import solo_docente
 from utils.http_helpers import read_json_body, send_json, send_error
 
-grupo_service = GrupoService()
+grupo_business = GrupoBusiness()
 
 
 def handle_grupos(handler, method: str, parts: list[str]):
@@ -23,12 +23,12 @@ def handle_grupos(handler, method: str, parts: list[str]):
 
     try:
         if method == "GET" and not grupo_id:
-            grupos = grupo_service.listar(docente_id)
+            grupos = grupo_business.listar(docente_id)
             send_json(handler, 200, {"grupos": grupos})
 
         elif method == "POST" and not grupo_id:
             body = read_json_body(handler)
-            grupo = grupo_service.crear(
+            grupo = grupo_business.crear(
                 docente_id,
                 body.get("periodo_id", ""),
                 body.get("materia_id", ""),
@@ -39,16 +39,16 @@ def handle_grupos(handler, method: str, parts: list[str]):
             send_json(handler, 201, grupo)
 
         elif method == "GET" and grupo_id and not subrecurso:
-            grupo = grupo_service.obtener(grupo_id, docente_id)
+            grupo = grupo_business.obtener(grupo_id, docente_id)
             send_json(handler, 200, grupo)
 
         elif method == "GET" and grupo_id and subrecurso == "clases":
-            clases = grupo_service.listar_clases(grupo_id, docente_id)
+            clases = grupo_business.listar_clases(grupo_id, docente_id)
             send_json(handler, 200, {"clases": clases, "total": len(clases)})
 
         elif method == "PUT" and grupo_id and subrecurso == "horarios":
             body = read_json_body(handler)
-            resultado = grupo_service.regenerar_clases(
+            resultado = grupo_business.regenerar_clases(
                 grupo_id, docente_id, body.get("horarios", [])
             )
             send_json(handler, 200, resultado)

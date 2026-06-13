@@ -4,7 +4,7 @@ from data.repositories.periodo_repository import PeriodoRepository
 TIPOS_VALIDOS = {"mensual", "bimestral", "trimestral", "semestral", "anual", "personalizado"}
 
 
-class PeriodoService:
+class PeriodoBusiness:
 
     def __init__(self):
         self.repo = PeriodoRepository()

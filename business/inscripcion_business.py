@@ -2,7 +2,7 @@ import datetime
 from data.repositories.inscripcion_repository import InscripcionRepository
 
 
-class InscripcionService:
+class InscripcionBusiness:
 
     def __init__(self):
         self.repo = InscripcionRepository()

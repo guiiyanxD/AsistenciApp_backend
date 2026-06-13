@@ -1,8 +1,8 @@
-from business.services.clase_service import ClaseService
+from business.clase_business import ClaseBusiness
 from presentation.middlewares.auth_middleware import solo_docente
 from utils.http_helpers import read_json_body, send_json, send_error
 
-clase_service = ClaseService()
+clase_business = ClaseBusiness()
 
 
 def handle_clases(handler, method: str, parts: list[str]):
@@ -13,7 +13,7 @@ def handle_clases(handler, method: str, parts: list[str]):
     PUT  /api/clases/{id}/restaurar     → restaurar clase cancelada
     """
     clase_id = parts[2] if len(parts) >= 3 else None
-    accion = parts[3] if len(parts) >= 4 else None
+    accion   = parts[3] if len(parts) >= 4 else None
 
     if not clase_id:
         send_error(handler, 400, "clase_id es requerido")
@@ -44,14 +44,12 @@ def handle_clases_grupo(handler, method: str, parts: list[str]):
     _crear_extraordinaria(handler, grupo_id)
 
 
-# ── Handlers privados ─────────────────────────────────────────────────
-
 def _asistencias(handler, clase_id: str):
     payload = solo_docente(handler)
     if not payload:
         return
     try:
-        resultado = clase_service.asistencias_clase(clase_id, payload["sub"])
+        resultado = clase_business.asistencias_clase(clase_id, payload["sub"])
         send_json(handler, 200, resultado)
     except LookupError as e:
         send_error(handler, 404, str(e))
@@ -71,7 +69,7 @@ def _cambiar_tipo(handler, clase_id: str):
         if not tipo:
             send_error(handler, 400, "El campo 'tipo' es obligatorio")
             return
-        actualizada = clase_service.cambiar_tipo(clase_id, payload["sub"], tipo)
+        actualizada = clase_business.cambiar_tipo(clase_id, payload["sub"], tipo)
         send_json(handler, 200, actualizada)
     except LookupError as e:
         send_error(handler, 404, str(e))
@@ -90,7 +88,7 @@ def _cancelar(handler, clase_id: str):
     try:
         body = read_json_body(handler)
         observaciones = body.get("observaciones", "")
-        cancelada = clase_service.cancelar(clase_id, payload["sub"], observaciones)
+        cancelada = clase_business.cancelar(clase_id, payload["sub"], observaciones)
         send_json(handler, 200, cancelada)
     except LookupError as e:
         send_error(handler, 404, str(e))
@@ -107,7 +105,7 @@ def _restaurar(handler, clase_id: str):
     if not payload:
         return
     try:
-        restaurada = clase_service.restaurar(clase_id, payload["sub"])
+        restaurada = clase_business.restaurar(clase_id, payload["sub"])
         send_json(handler, 200, restaurada)
     except LookupError as e:
         send_error(handler, 404, str(e))
@@ -125,7 +123,7 @@ def _crear_extraordinaria(handler, grupo_id: str):
         return
     try:
         body = read_json_body(handler)
-        clase = clase_service.crear_extraordinaria(
+        clase = clase_business.crear_extraordinaria(
             docente_id=payload["sub"],
             grupo_id=grupo_id,
             fecha=body.get("fecha", ""),

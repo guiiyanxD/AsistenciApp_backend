@@ -1,8 +1,8 @@
-from business.services.periodo_service import PeriodoService
+from business.periodo_business import PeriodoBusiness
 from presentation.middlewares.auth_middleware import solo_docente
 from utils.http_helpers import read_json_body, send_json, send_error
 
-periodo_service = PeriodoService()
+periodo_business = PeriodoBusiness()
 
 
 def handle_periodos(handler, method: str, parts: list[str]):
@@ -23,16 +23,16 @@ def handle_periodos(handler, method: str, parts: list[str]):
 
     try:
         if method == "GET" and not periodo_id:
-            periodos = periodo_service.listar(docente_id)
+            periodos = periodo_business.listar(docente_id)
             send_json(handler, 200, {"periodos": periodos})
 
         elif method == "GET" and periodo_id:
-            periodo = periodo_service.obtener(periodo_id, docente_id)
+            periodo = periodo_business.obtener(periodo_id, docente_id)
             send_json(handler, 200, periodo)
 
         elif method == "POST" and not periodo_id:
             body = read_json_body(handler)
-            periodo = periodo_service.crear(
+            periodo = periodo_business.crear(
                 docente_id,
                 body.get("nombre", ""),
                 body.get("tipo", ""),
@@ -43,7 +43,7 @@ def handle_periodos(handler, method: str, parts: list[str]):
 
         elif method == "PUT" and periodo_id:
             body = read_json_body(handler)
-            periodo = periodo_service.actualizar(
+            periodo = periodo_business.actualizar(
                 periodo_id, docente_id,
                 body.get("nombre", ""),
                 body.get("tipo", ""),
@@ -54,7 +54,7 @@ def handle_periodos(handler, method: str, parts: list[str]):
             send_json(handler, 200, periodo)
 
         elif method == "DELETE" and periodo_id:
-            periodo_service.eliminar(periodo_id, docente_id)
+            periodo_business.eliminar(periodo_id, docente_id)
             send_json(handler, 200, {"mensaje": "Periodo eliminado correctamente"})
 
         else:

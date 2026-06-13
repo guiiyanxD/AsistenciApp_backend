@@ -1,7 +1,7 @@
 from data.repositories.materia_repository import MateriaRepository
 
 
-class MateriaService:
+class MateriaBusiness:
 
     def __init__(self):
         self.repo = MateriaRepository()

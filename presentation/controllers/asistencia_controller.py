@@ -1,8 +1,8 @@
-from business.services.asistencia_service import AsistenciaService
+from business.asistencia_business import AsistenciaBusiness
 from presentation.middlewares.auth_middleware import solo_estudiante, solo_docente
 from utils.http_helpers import read_json_body, send_json, send_error
 
-asistencia_service = AsistenciaService()
+asistencia_business = AsistenciaBusiness()
 
 
 def handle_asistencias(handler, method: str, parts: list[str]):
@@ -12,22 +12,18 @@ def handle_asistencias(handler, method: str, parts: list[str]):
     GET  /api/asistencias/grupo/{grupo_id}/resumen        → docente ve resumen del grupo
     GET  /api/asistencias/grupo/{grupo_id}/mi-historial   → estudiante ve su historial
     """
-    accion = parts[2] if len(parts) >= 3 else None
-    sub_id = parts[3] if len(parts) >= 4 else None
+    accion    = parts[2] if len(parts) >= 3 else None
+    sub_id    = parts[3] if len(parts) >= 4 else None
     sub_accion = parts[4] if len(parts) >= 5 else None
 
     if method == "POST" and accion == "marcar":
         _marcar(handler)
-
     elif method == "GET" and accion == "clase" and sub_id:
         _por_clase(handler, sub_id)
-
     elif method == "GET" and accion == "grupo" and sub_id and sub_accion == "resumen":
         _resumen_grupo(handler, sub_id)
-
     elif method == "GET" and accion == "grupo" and sub_id and sub_accion == "mi-historial":
         _mi_historial(handler, sub_id)
-
     else:
         send_error(handler, 404, "Ruta no encontrada")
 
@@ -42,8 +38,7 @@ def _marcar(handler):
         if not grupo_id:
             send_error(handler, 400, "grupo_id es obligatorio")
             return
-
-        resultado = asistencia_service.marcar(
+        resultado = asistencia_business.marcar(
             estudiante_id=payload["sub"],
             grupo_id=grupo_id,
             latitud=body.get("latitud"),
@@ -64,7 +59,7 @@ def _por_clase(handler, clase_id: str):
     if not payload:
         return
     try:
-        asistencias = asistencia_service.listar_por_clase(clase_id, payload["sub"])
+        asistencias = asistencia_business.listar_por_clase(clase_id, payload["sub"])
         send_json(handler, 200, {"asistencias": asistencias, "total": len(asistencias)})
     except LookupError as e:
         send_error(handler, 404, str(e))
@@ -79,7 +74,7 @@ def _resumen_grupo(handler, grupo_id: str):
     if not payload:
         return
     try:
-        resumen = asistencia_service.resumen_por_grupo(grupo_id, payload["sub"])
+        resumen = asistencia_business.resumen_por_grupo(grupo_id, payload["sub"])
         send_json(handler, 200, {"resumen": resumen})
     except PermissionError as e:
         send_error(handler, 403, str(e))
@@ -92,9 +87,7 @@ def _mi_historial(handler, grupo_id: str):
     if not payload:
         return
     try:
-        historial = asistencia_service.historial_estudiante(
-            grupo_id, payload["sub"]
-        )
+        historial = asistencia_business.historial_estudiante(grupo_id, payload["sub"])
         send_json(handler, 200, {"historial": historial})
     except PermissionError as e:
         send_error(handler, 403, str(e))

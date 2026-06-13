@@ -1,8 +1,8 @@
-from business.services.materia_service import MateriaService
+from business.materia_business import MateriaBusiness
 from presentation.middlewares.auth_middleware import solo_docente
 from utils.http_helpers import read_json_body, send_json, send_error
 
-materia_service = MateriaService()
+materia_business = MateriaBusiness()
 
 
 def handle_materias(handler, method: str, parts: list[str]):
@@ -23,16 +23,16 @@ def handle_materias(handler, method: str, parts: list[str]):
 
     try:
         if method == "GET" and not materia_id:
-            materias = materia_service.listar(docente_id)
+            materias = materia_business.listar(docente_id)
             send_json(handler, 200, {"materias": materias})
 
         elif method == "GET" and materia_id:
-            materia = materia_service.obtener(materia_id, docente_id)
+            materia = materia_business.obtener(materia_id, docente_id)
             send_json(handler, 200, materia)
 
         elif method == "POST" and not materia_id:
             body = read_json_body(handler)
-            materia = materia_service.crear(
+            materia = materia_business.crear(
                 docente_id,
                 body.get("nombre", ""),
                 body.get("codigo"),
@@ -42,7 +42,7 @@ def handle_materias(handler, method: str, parts: list[str]):
 
         elif method == "PUT" and materia_id:
             body = read_json_body(handler)
-            materia = materia_service.actualizar(
+            materia = materia_business.actualizar(
                 materia_id, docente_id,
                 body.get("nombre", ""),
                 body.get("codigo"),
@@ -51,7 +51,7 @@ def handle_materias(handler, method: str, parts: list[str]):
             send_json(handler, 200, materia)
 
         elif method == "DELETE" and materia_id:
-            materia_service.eliminar(materia_id, docente_id)
+            materia_business.eliminar(materia_id, docente_id)
             send_json(handler, 200, {"mensaje": "Materia eliminada correctamente"})
 
         else:
