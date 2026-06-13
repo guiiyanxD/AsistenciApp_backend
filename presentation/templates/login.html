@@ -28,6 +28,10 @@
                 <input type="radio" id="rol-estudiante" name="rol" value="estudiante"
                     {% if rol == 'estudiante' %}checked{% endif %}>
                 <label for="rol-estudiante">Estudiante</label>
+
+                <input type="radio" id="rol-admin" name="rol" value="admin"
+                    {% if rol == 'admin' %}checked{% endif %}>
+                <label for="rol-admin">Administrador</label>
             </div>
 
             <div class="campo">
@@ -49,8 +53,9 @@
 
         <div class="login-pie">
             ¿No tienes cuenta?
-            <a href="/registro/docente">Regístrate como docente</a> ·
-            <a href="/registro/estudiante">Regístrate como estudiante</a>
+            <a href="/registro/docente">Docente</a> ·
+            <a href="/registro/estudiante">Estudiante</a> ·
+            <a href="/registro/admin">Administrador</a>
         </div>
 
     </div>

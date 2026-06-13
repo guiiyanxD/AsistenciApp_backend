@@ -1,7 +1,14 @@
-from business.auth_business import AuthBusiness
+from presentation.strategies.rol_strategy import RolStrategy
+from presentation.strategies.docente_strategy import DocenteStrategy
+from presentation.strategies.estudiante_strategy import EstudianteStrategy
+from presentation.strategies.admin_strategy import AdminStrategy
 from utils.http_helpers import read_form_body, send_html, send_error, render_template
 
-auth_business = AuthBusiness()
+_estrategias: dict[str, RolStrategy] = {
+    "docente":    DocenteStrategy(),
+    "estudiante": EstudianteStrategy(),
+    "admin":      AdminStrategy(),
+}
 
 
 def handle_auth_web(handler, method: str, partes: list):
@@ -20,22 +27,16 @@ def handle_auth_web(handler, method: str, partes: list):
 
     elif accion == "registro":
         rol = partes[1] if len(partes) >= 2 else ""
-        if rol == "docente":
-            if method == "GET":
-                _mostrar_registro_docente(handler)
-            elif method == "POST":
-                _procesar_registro_docente(handler)
-            else:
-                send_error(handler, 405, "Método no permitido")
-        elif rol == "estudiante":
-            if method == "GET":
-                _mostrar_registro_estudiante(handler)
-            elif method == "POST":
-                _procesar_registro_estudiante(handler)
-            else:
-                send_error(handler, 405, "Método no permitido")
-        else:
+        estrategia = _estrategias.get(rol)
+        if not estrategia:
             send_error(handler, 404, "Ruta no encontrada")
+            return
+        if method == "GET":
+            _mostrar_registro(handler, estrategia)
+        elif method == "POST":
+            _procesar_registro(handler, estrategia)
+        else:
+            send_error(handler, 405, "Método no permitido")
 
 
 # ── Login ──────────────────────────────────────────────────────────────────────
@@ -47,24 +48,20 @@ def _mostrar_login(handler):
 
 def _procesar_login(handler):
     body = read_form_body(handler)
-    rol = body.get("rol", "")
-    email = body.get("email", "")
+    rol      = body.get("rol", "")
+    email    = body.get("email", "")
     password = body.get("password", "")
 
-    try:
-        if rol == "docente":
-            resultado = auth_business.login_docente(email, password)
-            token = resultado["token"]
-            destino = "/docente/inicio"
-        elif rol == "estudiante":
-            resultado = auth_business.login_estudiante(email, password)
-            token = resultado["token"]
-            destino = "/estudiante/inicio"
-        else:
-            html = render_template("login.html", error="Selecciona un rol válido.", rol=rol, email=email)
-            send_html(handler, 400, html)
-            return
+    estrategia = _estrategias.get(rol)
+    if not estrategia:
+        html = render_template("login.html", error="Selecciona un rol válido.", rol=rol, email=email)
+        send_html(handler, 400, html)
+        return
 
+    try:
+        resultado = estrategia.login(email, password)
+        token   = resultado["token"]
+        destino = estrategia.get_dashboard_url()
         handler.send_response(302)
         handler.send_header("Location", destino)
         handler.send_header("Set-Cookie", f"session={token}; HttpOnly; Path=/; SameSite=Lax")
@@ -85,71 +82,29 @@ def _logout(handler):
     handler.end_headers()
 
 
-# ── Registro docente ───────────────────────────────────────────────────────────
+# ── Registro (genérico — delega en la Strategy activa) ────────────────────────
 
-def _mostrar_registro_docente(handler):
-    html = render_template("registro_docente.html", error=None, datos={})
+def _mostrar_registro(handler, estrategia: RolStrategy):
+    html = render_template(estrategia.get_template_registro(), error=None, datos={})
     send_html(handler, 200, html)
 
 
-def _procesar_registro_docente(handler):
-    body = read_form_body(handler)
-    datos = {
-        "nombre":    body.get("nombre", ""),
-        "email":     body.get("email", ""),
-        "profesion": body.get("profesion", ""),
-    }
+def _procesar_registro(handler, estrategia: RolStrategy):
+    body  = read_form_body(handler)
+    datos = estrategia.extraer_datos_registro(body)
 
     try:
-        resultado = auth_business.registrar_docente(
-            datos["nombre"],
-            datos["email"],
-            body.get("password", ""),
-            datos["profesion"],
-        )
-        token = resultado["token"]
+        resultado = estrategia.registrar(body)
+        token   = resultado["token"]
+        destino = estrategia.get_dashboard_url()
         handler.send_response(302)
-        handler.send_header("Location", "/docente/inicio")
+        handler.send_header("Location", destino)
         handler.send_header("Set-Cookie", f"session={token}; HttpOnly; Path=/; SameSite=Lax")
         handler.end_headers()
 
     except ValueError as e:
-        html = render_template("registro_docente.html", error=str(e), datos=datos)
+        html = render_template(estrategia.get_template_registro(), error=str(e), datos=datos)
         send_html(handler, 400, html)
     except Exception:
-        html = render_template("registro_docente.html", error="Error interno del servidor.", datos=datos)
-        send_html(handler, 500, html)
-
-
-# ── Registro estudiante ────────────────────────────────────────────────────────
-
-def _mostrar_registro_estudiante(handler):
-    html = render_template("registro_estudiante.html", error=None, datos={})
-    send_html(handler, 200, html)
-
-
-def _procesar_registro_estudiante(handler):
-    body = read_form_body(handler)
-    datos = {
-        "nombre": body.get("nombre", ""),
-        "email":  body.get("email", ""),
-    }
-
-    try:
-        resultado = auth_business.registrar_estudiante(
-            datos["nombre"],
-            datos["email"],
-            body.get("password", ""),
-        )
-        token = resultado["token"]
-        handler.send_response(302)
-        handler.send_header("Location", "/estudiante/inicio")
-        handler.send_header("Set-Cookie", f"session={token}; HttpOnly; Path=/; SameSite=Lax")
-        handler.end_headers()
-
-    except ValueError as e:
-        html = render_template("registro_estudiante.html", error=str(e), datos=datos)
-        send_html(handler, 400, html)
-    except Exception:
-        html = render_template("registro_estudiante.html", error="Error interno del servidor.", datos=datos)
+        html = render_template(estrategia.get_template_registro(), error="Error interno del servidor.", datos=datos)
         send_html(handler, 500, html)

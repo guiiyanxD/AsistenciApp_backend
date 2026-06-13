@@ -1,4 +1,3 @@
-import json
 import os
 import mimetypes
 from urllib.parse import parse_qs
@@ -12,32 +11,6 @@ _STATIC_DIR    = os.path.join(_BASE_DIR, "presentation", "static")
 _jinja_env = Environment(loader=FileSystemLoader(_TEMPLATES_DIR), autoescape=True)
 
 
-# ── Helpers existentes (API JSON) ──────────────────────────────────────────────
-
-def read_json_body(handler: BaseHTTPRequestHandler) -> dict:
-    length = int(handler.headers.get("Content-Length", 0))
-    if length == 0:
-        return {}
-    raw = handler.rfile.read(length)
-    return json.loads(raw.decode("utf-8"))
-
-
-def send_json(handler: BaseHTTPRequestHandler, status: int, data: dict):
-    body = json.dumps(data, default=str).encode("utf-8")
-    handler.send_response(status)
-    handler.send_header("Content-Type", "application/json")
-    handler.send_header("Content-Length", str(len(body)))
-    handler.send_header("Access-Control-Allow-Origin", "*")
-    handler.end_headers()
-    handler.wfile.write(body)
-
-
-def send_error(handler: BaseHTTPRequestHandler, status: int, message: str):
-    send_json(handler, status, {"error": message})
-
-
-# ── Nuevos helpers (vistas web) ────────────────────────────────────────────────
-
 def render_template(plantilla: str, **contexto) -> str:
     template = _jinja_env.get_template(plantilla)
     return template.render(**contexto)
@@ -50,6 +23,16 @@ def send_html(handler: BaseHTTPRequestHandler, status: int, html: str):
     handler.send_header("Content-Length", str(len(body)))
     handler.end_headers()
     handler.wfile.write(body)
+
+
+def send_error(handler: BaseHTTPRequestHandler, status: int, message: str):
+    html = (
+        f"<!doctype html><html><head><meta charset='utf-8'>"
+        f"<title>Error {status}</title></head><body>"
+        f"<h2>Error {status}</h2><p>{message}</p>"
+        f"<a href='/login'>Volver al inicio</a></body></html>"
+    )
+    send_html(handler, status, html)
 
 
 def send_redirect(handler: BaseHTTPRequestHandler, destino: str):
@@ -68,11 +51,9 @@ def read_form_body(handler: BaseHTTPRequestHandler) -> dict:
 
 
 def serve_static(handler: BaseHTTPRequestHandler, url_path: str):
-    # Extraer la ruta relativa quitando el prefijo "/static"
     relative = url_path[len("/static"):].lstrip("/")
     file_path = os.path.normpath(os.path.join(_STATIC_DIR, relative))
 
-    # Evitar path traversal
     if not file_path.startswith(os.path.normpath(_STATIC_DIR)):
         send_error(handler, 403, "Acceso denegado")
         return

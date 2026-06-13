@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Administrador - Sistema de Asistencias</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+
+<div class="panel-pagina">
+
+    <header class="panel-header">
+        <h1 class="panel-titulo">Panel de Administración</h1>
+        <div class="panel-usuario">
+            Bienvenido, <strong>{{ nombre }}</strong>
+            <a href="/logout" class="btn-logout">Cerrar sesión</a>
+        </div>
+    </header>
+
+    <main class="panel-contenido">
+
+        <div class="panel-bienvenida">
+            <h2>Hola, {{ nombre }}</h2>
+            <p>Desde aquí puedes gestionar el sistema de asistencias.</p>
+        </div>
+
+        <div class="panel-acciones">
+            <div class="accion-tarjeta">
+                <h3>Docentes</h3>
+                <p>Gestiona los docentes registrados en el sistema.</p>
+            </div>
+            <div class="accion-tarjeta">
+                <h3>Estudiantes</h3>
+                <p>Gestiona los estudiantes registrados en el sistema.</p>
+            </div>
+            <div class="accion-tarjeta">
+                <h3>Reportes</h3>
+                <p>Consulta reportes generales de asistencia.</p>
+            </div>
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>

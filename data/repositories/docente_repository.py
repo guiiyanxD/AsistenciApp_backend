@@ -3,16 +3,18 @@ from config.database import get_connection
 
 class DocenteRepository:
 
-    def crear(self, nombre: str, email: str, password_hash: str, profesion: str) -> dict:
+    def crear(self, nombre: str, email: str, password_hash: str, profesion: str,
+              titulo: str, departamento: str, telefono: str) -> dict:
         with get_connection() as conn:
             with conn.cursor() as cur:
                 cur.execute(
                     """
-                    INSERT INTO docente (nombre, email, password_hash, profesion)
-                    VALUES (%s, %s, %s, %s)
-                    RETURNING id, nombre, email,  profesion, creado_en
+                    INSERT INTO docente
+                        (nombre, email, password_hash, profesion, titulo, departamento, telefono)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s)
+                    RETURNING id, nombre, email, profesion, titulo, departamento, telefono, creado_en
                     """,
-                    (nombre, email, password_hash, profesion),
+                    (nombre, email, password_hash, profesion, titulo, departamento, telefono or None),
                 )
                 conn.commit()
                 return dict(cur.fetchone())

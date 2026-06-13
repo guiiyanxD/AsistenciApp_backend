@@ -28,10 +28,36 @@
             </div>
 
             <div class="campo">
+                <label for="titulo">Título académico</label>
+                <select id="titulo" name="titulo" required>
+                    <option value="" disabled {% if not datos.titulo %}selected{% endif %}>Selecciona tu título</option>
+                    <option value="Lic." {% if datos.titulo == 'Lic.' %}selected{% endif %}>Lic. — Licenciado</option>
+                    <option value="Ing." {% if datos.titulo == 'Ing.' %}selected{% endif %}>Ing. — Ingeniero</option>
+                    <option value="Arq." {% if datos.titulo == 'Arq.' %}selected{% endif %}>Arq. — Arquitecto</option>
+                    <option value="Mgtr." {% if datos.titulo == 'Mgtr.' %}selected{% endif %}>Mgtr. — Magíster</option>
+                    <option value="Dr." {% if datos.titulo == 'Dr.' %}selected{% endif %}>Dr. — Doctor</option>
+                </select>
+            </div>
+
+            <div class="campo">
                 <label for="profesion">Profesión</label>
                 <input type="text" id="profesion" name="profesion"
                     value="{{ datos.profesion or '' }}"
-                    placeholder="Ej. Ingeniero en Sistemas" required>
+                    placeholder="Ej. Ingeniería en Sistemas" required>
+            </div>
+
+            <div class="campo">
+                <label for="departamento">Departamento</label>
+                <input type="text" id="departamento" name="departamento"
+                    value="{{ datos.departamento or '' }}"
+                    placeholder="Ej. Ciencias de la Computación" required>
+            </div>
+
+            <div class="campo">
+                <label for="telefono">Teléfono de contacto <span class="campo-opcional">(opcional)</span></label>
+                <input type="tel" id="telefono" name="telefono"
+                    value="{{ datos.telefono or '' }}"
+                    placeholder="Ej. +503 7000-0000">
             </div>
 
             <div class="campo">
