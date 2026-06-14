@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block titulo %}Nuevo Período Académico - Panel Docente{% endblock %}
+
+{% block contenido %}
+
+<div class="seccion form-crear">
+    <div class="seccion-cabecera">
+        <h2 class="seccion-titulo">Nuevo Período Académico</h2>
+        <a href="/docente/inicio" class="btn-volver">← Volver al panel</a>
+    </div>
+
+    {% if error %}
+    <div class="alerta-error">{{ error }}</div>
+    {% endif %}
+
+    <form method="POST" action="/docente/periodos/nuevo">
+        <div class="campo">
+            <label>Nombre *</label>
+            <input type="text" name="nombre" value="{{ valores.nombre or '' }}"
+                   placeholder="Ej. Semestre I 2026" maxlength="120" required>
+        </div>
+        <div class="campo">
+            <label>Tipo *</label>
+            <select name="tipo" required>
+                <option value="">— Seleccionar tipo —</option>
+                {% for tipo in ['mensual', 'bimestral', 'trimestral', 'semestral', 'anual', 'personalizado'] %}
+                <option value="{{ tipo }}" {% if valores.tipo == tipo %}selected{% endif %}>
+                    {{ tipo | capitalize }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="campo">
+            <label>Fecha de inicio *</label>
+            <input type="date" name="fecha_inicio" value="{{ valores.fecha_inicio or '' }}" required>
+        </div>
+        <div class="campo">
+            <label>Fecha de fin *</label>
+            <input type="date" name="fecha_fin" value="{{ valores.fecha_fin or '' }}" required>
+        </div>
+        <button type="submit" class="btn-crear">Guardar período</button>
+    </form>
+</div>
+
+{% endblock %}

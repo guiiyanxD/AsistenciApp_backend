@@ -5,22 +5,38 @@
 {% block contenido %}
 
 <div class="bienvenida">
-    <h1>Bienvenido, {{ nombre }}</h1>
-    <p>Aquí están los grupos en los que estás inscrito.</p>
+    <h1>Bienvenid@, {{ nombre }}</h1>
+    <p>Gestiona tus inscripciones y consulta tu estado en cada grupo.</p>
 </div>
 
 <div class="seccion">
-    <h2 class="seccion-titulo">Mis Grupos Inscritos</h2>
+    <h2 class="seccion-titulo">Unirse a un grupo</h2>
+
+    {% if error %}
+    <div class="alerta-error">{{ error }}</div>
+    {% endif %}
+
+    <form method="POST" action="/estudiante/unirse" class="form-unirse">
+        <input type="text" name="codigo" value="{{ codigo or '' }}"
+               placeholder="Código de invitación (Ej. ABC123)"
+               maxlength="12" required>
+        <button type="submit" class="btn-secundario">Unirse</button>
+    </form>
+</div>
+
+<div class="seccion">
+    <h2 class="seccion-titulo">Mis Grupos</h2>
 
     {% if grupos %}
     <table class="tabla">
         <thead>
             <tr>
-                <th>Nombre del grupo</th>
+                <th>Grupo</th>
                 <th>Materia</th>
                 <th>Período</th>
                 <th>Fechas</th>
-                <th>Código</th>
+                <th>Estado</th>
+                <th>Acción disponible</th>
             </tr>
         </thead>
         <tbody>
@@ -30,7 +46,35 @@
                 <td>{{ g.materia_nombre }}</td>
                 <td>{{ g.periodo_nombre }}</td>
                 <td>{{ g.fecha_inicio }} — {{ g.fecha_fin }}</td>
-                <td><span class="badge badge-codigo">{{ g.codigo_invitacion }}</span></td>
+                <td>
+                    {% set estado = g.estado %}
+                    {% include "partials/badge_estado.html" %}
+                </td>
+                <td>
+                    {% if g.estado == 'activa' %}
+                    <span class="accion-info">Pendiente evaluación del docente</span>
+
+                    {% elif g.estado == 'aprobada' %}
+                    <span class="accion-info accion-finalizada">Materia finalizada</span>
+
+                    {% elif g.estado == 'reprobada' %}
+                    <form method="POST" action="/estudiante/unirse" class="form-reinscribir">
+                        <input type="hidden" name="codigo" value="{{ g.codigo_invitacion }}">
+                        <button type="submit" class="btn-reinscribir btn-reinscribir-naranja">
+                            Reinscribirse
+                        </button>
+                    </form>
+
+                    {% elif g.estado == 'retirada' %}
+                    <form method="POST" action="/estudiante/unirse" class="form-reinscribir">
+                        <input type="hidden" name="codigo" value="{{ g.codigo_invitacion }}">
+                        <button type="submit" class="btn-reinscribir btn-reinscribir-gris">
+                            Reinscribirse
+                        </button>
+                    </form>
+
+                    {% endif %}
+                </td>
             </tr>
             {% endfor %}
         </tbody>

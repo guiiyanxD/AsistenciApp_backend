@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block titulo %}Nueva Materia - Panel Docente{% endblock %}
+
+{% block contenido %}
+
+<div class="seccion form-crear">
+    <div class="seccion-cabecera">
+        <h2 class="seccion-titulo">Nueva Materia</h2>
+        <a href="/docente/inicio" class="btn-volver">← Volver al panel</a>
+    </div>
+
+    {% if error %}
+    <div class="alerta-error">{{ error }}</div>
+    {% endif %}
+
+    <form method="POST" action="/docente/materias/nueva">
+        <div class="campo">
+            <label>Nombre *</label>
+            <input type="text" name="nombre" value="{{ valores.nombre or '' }}"
+                   placeholder="Ej. Cálculo Diferencial" maxlength="120" required>
+        </div>
+        <div class="campo">
+            <label>Código <span class="campo-opcional">(opcional)</span></label>
+            <input type="text" name="codigo" value="{{ valores.codigo or '' }}"
+                   placeholder="Ej. MAT101" maxlength="30">
+        </div>
+        <div class="campo">
+            <label>Descripción <span class="campo-opcional">(opcional)</span></label>
+            <textarea name="descripcion" rows="3"
+                      placeholder="Breve descripción de la materia">{{ valores.descripcion or '' }}</textarea>
+        </div>
+        <button type="submit" class="btn-crear">Guardar materia</button>
+    </form>
+</div>
+
+{% endblock %}

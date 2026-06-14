@@ -1,0 +1,9 @@
+{% if estado == 'activa' %}
+<span class="badge badge-azul">Activa</span>
+{% elif estado == 'aprobada' %}
+<span class="badge badge-verde">Aprobada</span>
+{% elif estado == 'reprobada' %}
+<span class="badge badge-rojo">Reprobada</span>
+{% elif estado == 'retirada' %}
+<span class="badge badge-gris">Retirada</span>
+{% endif %}

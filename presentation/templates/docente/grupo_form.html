@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block titulo %}Nuevo Grupo - Panel Docente{% endblock %}
+
+{% block contenido %}
+
+<div class="seccion form-crear">
+    <div class="seccion-cabecera">
+        <h2 class="seccion-titulo">Nuevo Grupo</h2>
+        <a href="/docente/inicio" class="btn-volver">← Volver al panel</a>
+    </div>
+
+    {% if not materias %}
+    <div class="alerta-error">
+        Debes crear al menos una <a href="/docente/materias/nueva">materia</a> antes de poder crear un grupo.
+    </div>
+    {% elif not periodos %}
+    <div class="alerta-error">
+        Debes crear al menos un <a href="/docente/periodos/nuevo">período académico</a> antes de poder crear un grupo.
+    </div>
+    {% else %}
+
+    {% if error %}
+    <div class="alerta-error">{{ error }}</div>
+    {% endif %}
+
+    <form method="POST" action="/docente/grupos/nuevo">
+        <div class="campo">
+            <label>Nombre del grupo *</label>
+            <input type="text" name="nombre" value="{{ valores.nombre or '' }}"
+                   placeholder="Ej. Grupo A — Mañana" maxlength="120" required>
+        </div>
+        <div class="campo">
+            <label>Materia *</label>
+            <select name="materia_id" required>
+                <option value="">— Seleccionar materia —</option>
+                {% for m in materias %}
+                <option value="{{ m.id }}" {% if valores.materia_id == m.id|string %}selected{% endif %}>
+                    {{ m.nombre }}{% if m.codigo %} ({{ m.codigo }}){% endif %}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="campo">
+            <label>Período académico *</label>
+            <select name="periodo_id" required>
+                <option value="">— Seleccionar período —</option>
+                {% for p in periodos %}
+                <option value="{{ p.id }}" {% if valores.periodo_id == p.id|string %}selected{% endif %}>
+                    {{ p.nombre }} ({{ p.fecha_inicio }} — {{ p.fecha_fin }})
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="campo">
+            <label>Cupo máximo <span class="campo-opcional">(opcional — sin límite si se deja vacío)</span></label>
+            <input type="number" name="cupo_maximo" value="{{ valores.cupo_maximo or '' }}"
+                   min="1" max="999" placeholder="Ej. 30">
+        </div>
+
+        <div class="seccion-titulo" style="font-size:15px; margin: 20px 0 14px;">Horario semanal *</div>
+        <div class="horario-slot">
+            <div class="campo" style="margin-bottom:0">
+                <label>Día</label>
+                <select name="dia_semana" required>
+                    <option value="">— Día —</option>
+                    {% for dia in ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo'] %}
+                    <option value="{{ dia }}" {% if valores.dia_semana == dia %}selected{% endif %}>
+                        {{ dia | capitalize }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="campo" style="margin-bottom:0">
+                <label>Hora inicio</label>
+                <input type="time" name="hora_inicio" value="{{ valores.hora_inicio or '' }}" required>
+            </div>
+            <div class="campo" style="margin-bottom:0">
+                <label>Hora fin</label>
+                <input type="time" name="hora_fin" value="{{ valores.hora_fin or '' }}" required>
+            </div>
+        </div>
+
+        <button type="submit" class="btn-crear" style="margin-top:24px">Guardar grupo</button>
+    </form>
+
+    {% endif %}
+</div>
+
+{% endblock %}

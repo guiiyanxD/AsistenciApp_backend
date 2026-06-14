@@ -8,7 +8,7 @@ env/
 build/
 dist/
 *cpython
-
+*.md
 # ---- DOCKER----
 .docker/
 pgdata/

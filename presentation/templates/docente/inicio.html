@@ -25,7 +25,80 @@
 </div>
 
 <div class="seccion">
-    <h2 class="seccion-titulo">Mis Grupos</h2>
+    <div class="seccion-cabecera">
+        <h2 class="seccion-titulo">Mis Materias</h2>
+        <a href="/docente/materias/nueva" class="btn-nuevo">+ Nueva materia</a>
+    </div>
+
+    {% if materias %}
+    <table class="tabla">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Código</th>
+                <th>Descripción</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for m in materias %}
+            <tr>
+                <td>{{ m.nombre }}</td>
+                <td>{{ m.codigo or '—' }}</td>
+                <td>{{ m.descripcion or '—' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="vacio">No tienes materias registradas. <a href="/docente/materias/nueva" class="btn-volver">Crear la primera</a></p>
+    {% endif %}
+</div>
+
+<div class="seccion">
+    <div class="seccion-cabecera">
+        <h2 class="seccion-titulo">Mis Períodos Académicos</h2>
+        <a href="/docente/periodos/nuevo" class="btn-nuevo">+ Nuevo período</a>
+    </div>
+
+    {% if periodos %}
+    <table class="tabla">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Tipo</th>
+                <th>Inicio</th>
+                <th>Fin</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in periodos %}
+            <tr>
+                <td>{{ p.nombre }}</td>
+                <td>{{ p.tipo }}</td>
+                <td>{{ p.fecha_inicio }}</td>
+                <td>{{ p.fecha_fin }}</td>
+                <td>
+                    {% if p.activo %}
+                    <span class="badge badge-verde">Activo</span>
+                    {% else %}
+                    <span class="badge badge-gris">Inactivo</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="vacio">No tienes períodos académicos. <a href="/docente/periodos/nuevo" class="btn-volver">Crear el primero</a></p>
+    {% endif %}
+</div>
+
+<div class="seccion">
+    <div class="seccion-cabecera">
+        <h2 class="seccion-titulo">Mis Grupos</h2>
+        <a href="/docente/grupos/nuevo" class="btn-nuevo">+ Nuevo grupo</a>
+    </div>
 
     {% if grupos %}
     <table class="tabla">
@@ -37,6 +110,7 @@
                 <th>Código de invitación</th>
                 <th>Cupo máximo</th>
                 <th>Estado</th>
+                <th>Inscripciones</th>
             </tr>
         </thead>
         <tbody>
@@ -54,14 +128,16 @@
                     <span class="badge badge-rojo">Inactivo</span>
                     {% endif %}
                 </td>
+                <td>
+                    <a href="/docente/grupos/{{ grupo.id }}/inscripciones" class="btn-volver">Ver inscritos</a>
+                </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
     {% else %}
-    <p class="vacio">No tienes grupos registrados aún.</p>
+    <p class="vacio">No tienes grupos registrados. <a href="/docente/grupos/nuevo" class="btn-volver">Crear el primero</a></p>
     {% endif %}
-
 </div>
 
 {% endblock %}

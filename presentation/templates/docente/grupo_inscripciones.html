@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block titulo %}Inscripciones — {{ grupo_nombre }}{% endblock %}
+
+{% block contenido %}
+
+<div class="bienvenida">
+    <h1>{{ grupo_nombre }}</h1>
+    <p>Gestiona el estado de cada estudiante inscrito en este grupo.</p>
+</div>
+
+<div class="seccion">
+    <div class="seccion-cabecera">
+        <h2 class="seccion-titulo">Estudiantes inscritos</h2>
+        <a href="/docente/inicio" class="btn-volver">← Volver al panel</a>
+    </div>
+
+    {% if inscripciones %}
+    <table class="tabla">
+        <thead>
+            <tr>
+                <th>Estudiante</th>
+                <th>Correo</th>
+                <th>Fecha de inscripción</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in inscripciones %}
+            <tr>
+                <td>{{ i.estudiante_nombre }}</td>
+                <td>{{ i.estudiante_email }}</td>
+                <td>{{ i.fecha_inscripcion }}</td>
+                <td>
+                    {% set estado = i.estado %}
+                    {% include "partials/badge_estado.html" %}
+                </td>
+                <td>
+                    {% if i.estado == 'activa' %}
+                    <div class="acciones-grupo">
+                        <form method="POST" action="/docente/inscripciones/{{ i.id }}/aprobar">
+                            <button type="submit" class="btn-accion btn-aprobar">Aprobar</button>
+                        </form>
+                        <form method="POST" action="/docente/inscripciones/{{ i.id }}/reprobar">
+                            <button type="submit" class="btn-accion btn-reprobar">Reprobar</button>
+                        </form>
+                        <form method="POST" action="/docente/inscripciones/{{ i.id }}/retirar">
+                            <button type="submit" class="btn-accion btn-retirar">Retirar</button>
+                        </form>
+                    </div>
+                    {% else %}
+                    <span class="sin-acciones">—</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="vacio">No hay estudiantes inscritos en este grupo todavía.</p>
+    {% endif %}
+
+</div>
+
+{% endblock %}
