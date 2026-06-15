@@ -7,14 +7,14 @@ class EstadoActiva(InscripcionState):
     def valor(self) -> str:
         return "activa"
 
-    def inscribir(self, repo, grupo_id: str, estudiante_id: str) -> dict:
+    def inscribir(self, data, grupo_id: str, estudiante_id: str) -> dict:
         raise ValueError("Ya estás inscrito en este grupo")
 
-    def aprobar(self, repo, inscripcion_id: str) -> dict:
-        return repo.actualizar_estado(inscripcion_id, "aprobada")
+    def aprobar(self, data, inscripcion_id: str) -> dict:
+        return data.actualizar_estado(inscripcion_id, "aprobada")
 
-    def reprobar(self, repo, inscripcion_id: str) -> dict:
-        return repo.actualizar_estado(inscripcion_id, "reprobada")
+    def reprobar(self, data, inscripcion_id: str) -> dict:
+        return data.actualizar_estado(inscripcion_id, "reprobada")
 
-    def retirar(self, repo, inscripcion_id: str) -> dict:
-        return repo.actualizar_estado(inscripcion_id, "retirada")
+    def retirar(self, data, inscripcion_id: str) -> dict:
+        return data.actualizar_estado(inscripcion_id, "retirada")

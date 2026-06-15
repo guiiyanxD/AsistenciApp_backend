@@ -1,5 +1,5 @@
 import datetime
-from data.repositories.clase_repository import ClaseRepository
+from data.clase_data import ClaseData
 
 TIPOS_VALIDOS = {"clase", "examen", "exposicion"}
 
@@ -7,7 +7,7 @@ TIPOS_VALIDOS = {"clase", "examen", "exposicion"}
 class ClaseBusiness:
 
     def __init__(self):
-        self.repo = ClaseRepository()
+        self.repo = ClaseData()
 
     def _obtener_y_verificar(self, clase_id: str, docente_id: str) -> dict:
         clase = self.repo.buscar_por_id(clase_id)
@@ -70,8 +70,8 @@ class ClaseBusiness:
         if hf <= hi:
             raise ValueError("La hora de fin debe ser posterior a la hora de inicio")
 
-        from data.repositories.grupo_repository import GrupoRepository
-        grupo = GrupoRepository().buscar_por_id(grupo_id)
+        from data.grupo_data import GrupoData
+        grupo = GrupoData().buscar_por_id(grupo_id)
         if not grupo:
             raise LookupError("Grupo no encontrado")
         if str(grupo.get("docente_id")) != str(docente_id):

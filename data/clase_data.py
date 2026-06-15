@@ -1,11 +1,7 @@
 from config.database import get_connection
 
 
-class ClaseRepository:
-
-    # ------------------------------------------------------------------
-    # Lectura
-    # ------------------------------------------------------------------
+class ClaseData:
 
     def buscar_por_id(self, clase_id: str) -> dict | None:
         with get_connection() as conn:
@@ -41,10 +37,6 @@ class ClaseRepository:
                 )
                 return [dict(r) for r in cur.fetchall()]
 
-    # ------------------------------------------------------------------
-    # Etiquetar (cambiar tipo)
-    # ------------------------------------------------------------------
-
     def actualizar_tipo(self, clase_id: str, tipo: str) -> dict | None:
         with get_connection() as conn:
             with conn.cursor() as cur:
@@ -59,10 +51,6 @@ class ClaseRepository:
                 conn.commit()
                 row = cur.fetchone()
                 return dict(row) if row else None
-
-    # ------------------------------------------------------------------
-    # Cancelar / restaurar
-    # ------------------------------------------------------------------
 
     def cancelar(self, clase_id: str, observaciones: str) -> dict | None:
         with get_connection() as conn:
@@ -98,10 +86,6 @@ class ClaseRepository:
                 row = cur.fetchone()
                 return dict(row) if row else None
 
-    # ------------------------------------------------------------------
-    # Crear clase extraordinaria
-    # ------------------------------------------------------------------
-
     def crear_extraordinaria(self, grupo_id: str, fecha: str,
                               hora_inicio: str, hora_fin: str,
                               tipo: str, observaciones: str | None) -> dict:
@@ -133,15 +117,7 @@ class ClaseRepository:
                 )
                 return cur.fetchone() is not None
 
-    # ------------------------------------------------------------------
-    # Asistencias de una clase (tiempo real)
-    # ------------------------------------------------------------------
-
     def asistencias_con_ausentes(self, clase_id: str) -> list[dict]:
-        """
-        Retorna TODOS los estudiantes inscritos en el grupo de la clase,
-        marcando quiénes asistieron y quiénes están ausentes.
-        """
         with get_connection() as conn:
             with conn.cursor() as cur:
                 cur.execute(

@@ -1,15 +1,15 @@
 import datetime
-from data.repositories.asistencia_repository import AsistenciaRepository
-from data.repositories.inscripcion_repository import InscripcionRepository
-from data.repositories.grupo_repository import GrupoRepository
+from data.asistencia_data import AsistenciaData
+from data.inscripcion_data import InscripcionData
+from data.grupo_data import GrupoData
 
 
 class AsistenciaBusiness:
 
     def __init__(self):
-        self.repo = AsistenciaRepository()
-        self.inscripcion_repo = InscripcionRepository()
-        self.grupo_repo = GrupoRepository()
+        self.repo = AsistenciaData()
+        self.inscripcion_repo = InscripcionData()
+        self.grupo_repo = GrupoData()
 
     def marcar(self, estudiante_id: str, grupo_id: str,
                latitud: float | None, longitud: float | None,

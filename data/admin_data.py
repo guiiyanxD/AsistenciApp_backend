@@ -1,7 +1,7 @@
 from config.database import get_connection
 
 
-class AdminRepository:
+class AdminData:
 
     def crear(self, nombre: str, email: str, password_hash: str, cargo: str, area: str) -> dict:
         with get_connection() as conn:

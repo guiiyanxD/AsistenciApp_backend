@@ -7,5 +7,5 @@ class EstadoAprobada(InscripcionState):
     def valor(self) -> str:
         return "aprobada"
 
-    def inscribir(self, repo, grupo_id: str, estudiante_id: str) -> dict:
+    def inscribir(self, data, grupo_id: str, estudiante_id: str) -> dict:
         raise ValueError("Ya aprobaste esta materia, no puedes reinscribirte")

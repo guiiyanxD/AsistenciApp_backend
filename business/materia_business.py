@@ -1,10 +1,10 @@
-from data.repositories.materia_repository import MateriaRepository
+from data.materia_data import MateriaData
 
 
 class MateriaBusiness:
 
     def __init__(self):
-        self.repo = MateriaRepository()
+        self.repo = MateriaData()
 
     def crear(self, docente_id: str, nombre: str, codigo: str | None, descripcion: str | None) -> dict:
         if not nombre or not nombre.strip():

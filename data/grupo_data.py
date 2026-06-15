@@ -1,7 +1,7 @@
 from config.database import get_connection
 
 
-class GrupoRepository:
+class GrupoData:
 
     def crear(self, periodo_id: str, materia_id: str, nombre: str,
               codigo_invitacion: str, cupo_maximo: int | None) -> dict:
@@ -124,4 +124,3 @@ class GrupoRepository:
                     (grupo_id,),
                 )
                 conn.commit()
-    

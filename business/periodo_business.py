@@ -1,5 +1,5 @@
 import datetime
-from data.repositories.periodo_repository import PeriodoRepository
+from data.periodo_data import PeriodoData
 
 TIPOS_VALIDOS = {"mensual", "bimestral", "trimestral", "semestral", "anual", "personalizado"}
 
@@ -7,7 +7,7 @@ TIPOS_VALIDOS = {"mensual", "bimestral", "trimestral", "semestral", "anual", "pe
 class PeriodoBusiness:
 
     def __init__(self):
-        self.repo = PeriodoRepository()
+        self.repo = PeriodoData()
 
     def crear(self, docente_id: str, nombre: str, tipo: str,
               fecha_inicio: str, fecha_fin: str) -> dict:

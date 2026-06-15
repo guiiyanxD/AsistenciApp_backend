@@ -1,6 +1,3 @@
--- =========================================================
--- TIPOS ENUMERADOS
--- =========================================================
 
 CREATE TYPE tipo_periodo AS ENUM (
     'mensual', 'bimestral', 'trimestral',
@@ -33,9 +30,6 @@ CREATE TYPE dia_semana AS ENUM (
     'jueves', 'viernes', 'sabado', 'domingo'
 );
 
--- =========================================================
--- DOCENTE
--- =========================================================
 CREATE TABLE docente (
     id            UUID         PRIMARY KEY DEFAULT gen_random_uuid(),
     nombre        VARCHAR(120) NOT NULL,
@@ -49,9 +43,6 @@ CREATE TABLE docente (
     activo        BOOLEAN      NOT NULL DEFAULT TRUE
 );
 
--- =========================================================
--- ESTUDIANTE
--- =========================================================
 CREATE TABLE estudiante (
     id                UUID         PRIMARY KEY DEFAULT gen_random_uuid(),
     nombre            VARCHAR(120) NOT NULL,
@@ -65,9 +56,6 @@ CREATE TABLE estudiante (
     activo            BOOLEAN      NOT NULL DEFAULT TRUE
 );
 
--- =========================================================
--- ADMINISTRADOR
--- =========================================================
 CREATE TABLE administrador (
     id            UUID         PRIMARY KEY DEFAULT gen_random_uuid(),
     nombre        VARCHAR(120) NOT NULL,
@@ -79,9 +67,6 @@ CREATE TABLE administrador (
     activo        BOOLEAN      NOT NULL DEFAULT TRUE
 );
 
--- =========================================================
--- PERFIL BIOMETRICO
--- =========================================================
 CREATE TABLE perfil_biometrico (
     id                    UUID      PRIMARY KEY DEFAULT gen_random_uuid(),
     estudiante_id         UUID      NOT NULL UNIQUE REFERENCES estudiante(id) ON DELETE CASCADE,
@@ -92,9 +77,7 @@ CREATE TABLE perfil_biometrico (
     activo                BOOLEAN   NOT NULL DEFAULT TRUE
 );
 
--- =========================================================
--- PERIODO ACADEMICO
--- =========================================================
+
 CREATE TABLE periodo_academico (
     id           UUID         PRIMARY KEY DEFAULT gen_random_uuid(),
     docente_id   UUID         NOT NULL REFERENCES docente(id) ON DELETE CASCADE,
@@ -107,9 +90,7 @@ CREATE TABLE periodo_academico (
     CONSTRAINT chk_fechas CHECK (fecha_fin > fecha_inicio)
 );
 
--- =========================================================
--- MATERIA
--- =========================================================
+
 CREATE TABLE materia (
     id         UUID         PRIMARY KEY DEFAULT gen_random_uuid(),
     docente_id UUID         NOT NULL REFERENCES docente(id) ON DELETE CASCADE,
@@ -120,9 +101,7 @@ CREATE TABLE materia (
     CONSTRAINT uq_materia_codigo_docente UNIQUE (docente_id, codigo)
 );
 
--- =========================================================
--- GRUPO
--- =========================================================
+
 CREATE TABLE grupo (
     id                   UUID         PRIMARY KEY DEFAULT gen_random_uuid(),
     periodo_academico_id UUID         NOT NULL REFERENCES periodo_academico(id) ON DELETE RESTRICT,
@@ -134,9 +113,7 @@ CREATE TABLE grupo (
     creado_en            TIMESTAMP    NOT NULL DEFAULT NOW()
 );
 
--- =========================================================
--- HORARIO SEMANAL
--- =========================================================
+
 CREATE TABLE horario_semanal (
     id          UUID      PRIMARY KEY DEFAULT gen_random_uuid(),
     grupo_id    UUID      NOT NULL REFERENCES grupo(id) ON DELETE CASCADE,
@@ -147,9 +124,7 @@ CREATE TABLE horario_semanal (
     CONSTRAINT uq_horario_grupo_dia UNIQUE (grupo_id, dia_semana, hora_inicio)
 );
 
--- =========================================================
--- CLASE
--- =========================================================
+
 CREATE TABLE clase (
     id            UUID       PRIMARY KEY DEFAULT gen_random_uuid(),
     grupo_id      UUID       NOT NULL REFERENCES grupo(id) ON DELETE CASCADE,
@@ -163,9 +138,7 @@ CREATE TABLE clase (
     CONSTRAINT uq_clase_grupo_fecha_hora UNIQUE (grupo_id, fecha, hora_inicio)
 );
 
--- =========================================================
--- INSCRIPCION
--- =========================================================
+
 CREATE TABLE inscripcion (
     id                UUID               PRIMARY KEY DEFAULT gen_random_uuid(),
     grupo_id          UUID               NOT NULL REFERENCES grupo(id) ON DELETE CASCADE,
@@ -175,9 +148,7 @@ CREATE TABLE inscripcion (
     CONSTRAINT uq_inscripcion UNIQUE (grupo_id, estudiante_id)
 );
 
--- =========================================================
--- INTENTO BIOMETRICO
--- =========================================================
+
 CREATE TABLE intento_biometrico (
     id                   UUID                PRIMARY KEY DEFAULT gen_random_uuid(),
     estudiante_id        UUID                NOT NULL REFERENCES estudiante(id) ON DELETE CASCADE,
@@ -191,9 +162,7 @@ CREATE TABLE intento_biometrico (
     fecha_intento        TIMESTAMP           NOT NULL DEFAULT NOW()
 );
 
--- =========================================================
--- ASISTENCIA
--- =========================================================
+
 CREATE TABLE asistencia (
     id                    UUID              PRIMARY KEY DEFAULT gen_random_uuid(),
     clase_id              UUID              NOT NULL REFERENCES clase(id) ON DELETE CASCADE,
@@ -208,9 +177,7 @@ CREATE TABLE asistencia (
     CONSTRAINT uq_asistencia UNIQUE (clase_id, inscripcion_id)
 );
 
--- =========================================================
--- REVISION MANUAL
--- =========================================================
+
 CREATE TABLE revision_manual (
     id            UUID              PRIMARY KEY DEFAULT gen_random_uuid(),
     asistencia_id UUID              NOT NULL UNIQUE REFERENCES asistencia(id) ON DELETE CASCADE,
@@ -220,9 +187,7 @@ CREATE TABLE revision_manual (
     revisado_en   TIMESTAMP         NOT NULL DEFAULT NOW()
 );
 
--- =========================================================
--- INDICES
--- =========================================================
+
 CREATE INDEX idx_admin_email         ON administrador(email);
 CREATE INDEX idx_periodo_docente     ON periodo_academico(docente_id);
 CREATE INDEX idx_materia_docente     ON materia(docente_id);

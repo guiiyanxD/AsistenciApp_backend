@@ -1,7 +1,7 @@
 import datetime
-from data.repositories.grupo_repository import GrupoRepository
-from data.repositories.periodo_repository import PeriodoRepository
-from data.repositories.materia_repository import MateriaRepository
+from data.grupo_data import GrupoData
+from data.periodo_data import PeriodoData
+from data.materia_data import MateriaData
 from utils.codigo_helper import generar_codigo_invitacion
 
 DIAS_SEMANA = {
@@ -15,9 +15,9 @@ DIAS_VALIDOS = set(DIAS_SEMANA.keys())
 class GrupoBusiness:
 
     def __init__(self):
-        self.repo = GrupoRepository()
-        self.periodo_repo = PeriodoRepository()
-        self.materia_repo = MateriaRepository()
+        self.repo = GrupoData()
+        self.periodo_repo = PeriodoData()
+        self.materia_repo = MateriaData()
 
     def crear(self, docente_id: str, periodo_id: str, materia_id: str,
               nombre: str, cupo_maximo: int | None, horarios: list[dict]) -> dict:

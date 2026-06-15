@@ -7,5 +7,5 @@ class EstadoReprobada(InscripcionState):
     def valor(self) -> str:
         return "reprobada"
 
-    def inscribir(self, repo, grupo_id: str, estudiante_id: str) -> dict:
-        return repo.reactivar(grupo_id, estudiante_id)
+    def inscribir(self, data, grupo_id: str, estudiante_id: str) -> dict:
+        return data.reactivar(grupo_id, estudiante_id)

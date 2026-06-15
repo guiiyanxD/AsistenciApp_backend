@@ -2,14 +2,9 @@ import datetime
 from config.database import get_connection
 
 
-class AsistenciaRepository:
+class AsistenciaData:
 
     def buscar_clase_activa(self, grupo_id: str) -> dict | None:
-        """
-        Retorna la clase del grupo cuya ventana de tiempo está activa ahora mismo.
-        Una clase está activa si la fecha es hoy y la hora actual está entre
-        hora_inicio y hora_fin.
-        """
         with get_connection() as conn:
             with conn.cursor() as cur:
                 cur.execute(
@@ -109,10 +104,6 @@ class AsistenciaRepository:
                 return [dict(r) for r in cur.fetchall()]
 
     def resumen_por_grupo(self, grupo_id: str) -> list[dict]:
-        """
-        Devuelve, por cada estudiante inscrito, su total de clases,
-        asistencias marcadas y porcentaje.
-        """
         with get_connection() as conn:
             with conn.cursor() as cur:
                 cur.execute(

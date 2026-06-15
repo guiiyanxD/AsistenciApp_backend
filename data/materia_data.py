@@ -1,7 +1,7 @@
 from config.database import get_connection
 
 
-class MateriaRepository:
+class MateriaData:
 
     def crear(self, docente_id: str, nombre: str, codigo: str | None, descripcion: str | None) -> dict:
         with get_connection() as conn:

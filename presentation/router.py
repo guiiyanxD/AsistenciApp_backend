@@ -1,8 +1,8 @@
 from urllib.parse import urlparse
-from presentation.views.auth_view import handle_auth_web
-from presentation.views.docente_view import handle_docente_web
-from presentation.views.estudiante_view import handle_estudiante_web
-from presentation.views.admin_view import handle_admin_web
+from presentation.views.auth_view import auth_view
+from presentation.views.docente_view import docente_view
+from presentation.views.estudiante_view import estudiante_view
+from presentation.views.admin_view import admin_view
 from utils.http_helpers import send_error, send_redirect, serve_static
 
 
@@ -21,19 +21,19 @@ def enrutar(handler, method: str, path: str):
         return
 
     if primera in ("login", "logout", "registro"):
-        handle_auth_web(handler, method, partes)
+        auth_view.handle_auth_web(handler, method, partes)
         return
 
     if primera == "docente":
-        handle_docente_web(handler, method, partes)
+        docente_view.handle_docente_web(handler, method, partes)
         return
 
     if primera == "estudiante":
-        handle_estudiante_web(handler, method, partes)
+        estudiante_view.handle_estudiante_web(handler, method, partes)
         return
 
     if primera == "admin":
-        handle_admin_web(handler, method, partes)
+        admin_view.handle_admin_web(handler, method, partes)
         return
 
     send_error(handler, 404, "Ruta no encontrada")

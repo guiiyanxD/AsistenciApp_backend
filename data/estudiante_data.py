@@ -1,20 +1,20 @@
 from config.database import get_connection
 
 
-class DocenteRepository:
+class EstudianteData:
 
-    def crear(self, nombre: str, email: str, password_hash: str, profesion: str,
-              titulo: str, departamento: str, telefono: str) -> dict:
+    def crear(self, nombre: str, email: str, password_hash: str,
+              codigo_estudiante: str, carrera: str, semestre: int) -> dict:
         with get_connection() as conn:
             with conn.cursor() as cur:
                 cur.execute(
                     """
-                    INSERT INTO docente
-                        (nombre, email, password_hash, profesion, titulo, departamento, telefono)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s)
-                    RETURNING id, nombre, email, profesion, titulo, departamento, telefono, creado_en
+                    INSERT INTO estudiante
+                        (nombre, email, password_hash, codigo_estudiante, carrera, semestre)
+                    VALUES (%s, %s, %s, %s, %s, %s)
+                    RETURNING id, nombre, email, codigo_estudiante, carrera, semestre, creado_en
                     """,
-                    (nombre, email, password_hash, profesion, titulo, departamento, telefono or None),
+                    (nombre, email, password_hash, codigo_estudiante or None, carrera, semestre),
                 )
                 conn.commit()
                 return dict(cur.fetchone())
@@ -23,18 +23,18 @@ class DocenteRepository:
         with get_connection() as conn:
             with conn.cursor() as cur:
                 cur.execute(
-                    "SELECT * FROM docente WHERE email = %s AND activo = TRUE",
+                    "SELECT * FROM estudiante WHERE email = %s AND activo = TRUE",
                     (email,),
                 )
                 row = cur.fetchone()
                 return dict(row) if row else None
 
-    def buscar_por_id(self, docente_id: str) -> dict | None:
+    def buscar_por_id(self, estudiante_id: str) -> dict | None:
         with get_connection() as conn:
             with conn.cursor() as cur:
                 cur.execute(
-                    "SELECT id, nombre, email, creado_en FROM docente WHERE id = %s AND activo = TRUE",
-                    (docente_id,),
+                    "SELECT id, nombre, email, creado_en FROM estudiante WHERE id = %s AND activo = TRUE",
+                    (estudiante_id,),
                 )
                 row = cur.fetchone()
                 return dict(row) if row else None
@@ -43,7 +43,7 @@ class DocenteRepository:
         with get_connection() as conn:
             with conn.cursor() as cur:
                 cur.execute(
-                    "SELECT 1 FROM docente WHERE email = %s",
+                    "SELECT 1 FROM estudiante WHERE email = %s",
                     (email,),
                 )
                 return cur.fetchone() is not None

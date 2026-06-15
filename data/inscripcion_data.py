@@ -1,7 +1,7 @@
 from config.database import get_connection
 
 
-class InscripcionRepository:
+class InscripcionData:
 
     def buscar_grupo_por_codigo(self, codigo: str) -> dict | None:
         with get_connection() as conn:
